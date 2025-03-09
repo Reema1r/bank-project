@@ -27,18 +27,30 @@ class BankCustomer():
 
     def add_new_customer(self, balance_checking =0 , balance_savings=0, bank_file="bank.csv"):
         existing_ids=[]
+        existing_customers=[]
         new_customer_id=100001 #if the file empty or not found, assign the id to 10001
-        
-        with open("bank.csv" , "r") as file:
-                csvfile=csv.reader(file)
-                next(csvfile) #to skip the header line
-                for lines in csvfile:
-                    if lines: # check if there is lines
-                        existing_ids.append(int(lines[0]))
+        try:
+            with open("bank.csv" , "r") as file:
+                    csvfile=csv.reader(file)
+                    next(csvfile) #to skip the header line
+                    for lines in csvfile:
+                        if lines: # check if there is lines
+                            existing_ids.append(int(lines[0]))
+                            existing_customers.append((lines[1], lines[2]))
+                    # print(existing_customers)
 
-        if existing_ids:
-                new_customer_id=max(existing_ids)+1 # set the new_id to be the max id +1 
+            #check if the customer already exist before adding it to the CSV file
+            for first, last in existing_customers:
+                if first == self.first_name and last == self.last_name :
+                    print("The customer you are trying to add is already exists")
+                    return
             
+            if existing_ids:
+                    new_customer_id=max(existing_ids)+1 # set the new_id to be the max id +1 
+            
+        except FileNotFoundError:
+            print("Sorry,the file not found. Can't add a new customer")
+            return
         new_customer_info = [new_customer_id, 
                             self.first_name,
                             self.last_name,
@@ -53,6 +65,8 @@ class BankCustomer():
 
 new_customer_one= BankCustomer("Reema", "Radi", "pass1234") #create a new object of BankCustomer class
 new_customer_one.add_new_customer()  #call add_new_customer() to add it to the CSV file
+# new_customer_one= BankCustomer("Reema", "Radi", "pass1234") #trying to add existing customer
+# new_customer_one.add_new_customer()
 
 
 # class Account():
