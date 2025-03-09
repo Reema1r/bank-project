@@ -23,6 +23,13 @@ class BankCustomer():
         self.last_name=last_name
         self.password=password
 
+class Account():
+    def __init__(self, account_id, balance_checking,balance_savings):
+        self.account_id=account_id
+        self.balance_checking=balance_checking
+        self.balance_savings=balance_savings
+
+
 
 
 
