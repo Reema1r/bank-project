@@ -30,12 +30,16 @@ if not os.path.isfile(bank_file):
 
 
 class BankCustomer():
-    def __init__(self, first_name,last_name,password):
+    def __init__(self, first_name,last_name,password, balance_checking =0 , balance_savings=0, overdraft_count=0,is_account_active= True):
         self.first_name=first_name
         self.last_name=last_name
         self.password=password
+        self.balance_checking=balance_checking
+        self.balance_savings=balance_savings
+        self.overdraft_count=overdraft_count
+        self.is_account_active=is_account_active
 
-    def add_new_customer(self, balance_checking =0 , balance_savings=0):
+    def add_new_customer(self):
         existing_ids=[]
         existing_customers=[]
         new_customer_id=100001 #if the file empty, assign the id to 10001
@@ -68,8 +72,8 @@ class BankCustomer():
                             self.first_name,
                             self.last_name,
                             self.password,
-                            balance_checking,
-                            balance_savings]
+                            self.balance_checking,
+                            self.balance_savings]
 
         with open(bank_file, "a", newline="") as csvfile: 
             csvwriter = csv.writer(csvfile)
@@ -77,17 +81,17 @@ class BankCustomer():
             print(f"The new customer [{self.first_name} {self.last_name}] has been added successfully")
         return True
 
-class Account():
-    def __init__(self, account_id, balance_checking,balance_savings):
-        self.account_id=account_id
-        self.balance_checking=balance_checking
-        self.balance_savings=balance_savings
+# class Account():
+#     def __init__(self, account_id, balance_checking,balance_savings):
+#         self.account_id=account_id
+#         self.balance_checking=balance_checking
+#         self.balance_savings=balance_savings
         
-    def wihdraw_from_checking_account():
-        pass
+#     def wihdraw_from_checking_account():
+#         pass
         
-    def wihdraw_from_savings_account(): 
-        pass
+#     def wihdraw_from_savings_account(): 
+#         pass
     
     
 
