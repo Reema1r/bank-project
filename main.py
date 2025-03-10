@@ -77,11 +77,19 @@ class BankCustomer():
             print(f"The new customer [{self.first_name} {self.last_name}] has been added successfully")
         return True
 
-# class Account():
-#     def __init__(self, account_id, balance_checking,balance_savings):
-#         self.account_id=account_id
-#         self.balance_checking=balance_checking
-#         self.balance_savings=balance_savings
+class Account():
+    def __init__(self, account_id, balance_checking,balance_savings):
+        self.account_id=account_id
+        self.balance_checking=balance_checking
+        self.balance_savings=balance_savings
+        
+    def wihdraw_from_checking_account():
+        pass
+        
+    def wihdraw_from_savings_account(): 
+        pass
+    
+    
 
     
 if __name__== "__main__":
