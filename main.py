@@ -107,6 +107,18 @@ class Account():
                     print("Invalid login attempt. Please check your details and try again")
                     return False
         
+    def withdraw_options(self):
+        account_choice=int(input("Which account you want to withdraw from? \n(1) Checking account \n(2)Savings account"))
+        if account_choice == 1:
+            withdraw_amount= float(input("Enter amount to withdraw from checking account: "))
+            self.withdraw_from_checking_account(withdraw_amount)
+            
+        elif account_choice == 2:
+            withdraw_amount= float(input("Enter amount to withdraw from savings account: "))
+            self.withdraw_from_savings_account(withdraw_amount)
+        else:
+            print("Invalid choice. Please choose 1 or 2")
+            
 
 if __name__== "__main__":
     print("********** Welcome to ACME Bank **********")
@@ -123,7 +135,8 @@ if __name__== "__main__":
         account_id =input("Enter account id: ")
         password =input("Enter password: ")
         existing_customer = Account(account_id, password)  
-        existing_customer.login()
+        if existing_customer.login():
+            existing_customer.withdraw_options()
     else:
         print("Invalid input")
 
