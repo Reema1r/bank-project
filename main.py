@@ -1,4 +1,4 @@
-#Resourses Used:
+#Resources Used:
 # Check if a CSV file already exists: https://www.geeksforgeeks.org/python-check-if-a-file-or-directory-exists/
 # Create CSV file:https://www.geeksforgeeks.org/reading-and-writing-csv-files-in-python/
 # Append new customer to the existing CSV file (BankCustomer class - add_new_customer() method):https://www.geeksforgeeks.org/how-to-append-a-new-row-to-an-existing-csv-file/
@@ -35,13 +35,13 @@ class BankCustomer():
         self.last_name=last_name
         self.password=password
 
-    def add_new_customer(self, balance_checking =0 , balance_savings=0, bank_file="bank.csv"):
+    def add_new_customer(self, balance_checking =0 , balance_savings=0):
         existing_ids=[]
         existing_customers=[]
         new_customer_id=100001 #if the file empty, assign the id to 10001
         
         try:
-            with open("bank.csv" , "r",newline="") as file:
+            with open(bank_file , "r",newline="") as file:
                     csvfile=csv.reader(file)
                     next(csvfile) #to skip the header line
                     for lines in csvfile:
@@ -56,14 +56,14 @@ class BankCustomer():
                 
                 if first == self.first_name.lower().strip() and last == self.last_name.lower().strip() :
                     print("The customer you are trying to add is already exists")
-                    return
+                    return False
             
             if existing_ids:
                     new_customer_id=max(existing_ids)+1 # set the new_id to be the max id +1 
             
         except FileNotFoundError:
             print("Sorry,the file not found. Can't add a new customer")
-            return
+            return False
         new_customer_info = [new_customer_id, 
                             self.first_name,
                             self.last_name,
@@ -74,8 +74,8 @@ class BankCustomer():
         with open(bank_file, "a", newline="") as csvfile: 
             csvwriter = csv.writer(csvfile)
             csvwriter.writerow(new_customer_info) # add the new customer info to the CSV file
-            print(f"The new customer {self.first_name} {self.last_name} has been added successfully")
-
+            print(f"The new customer [{self.first_name} {self.last_name}] has been added successfully")
+        return True
 
 # class Account():
 #     def __init__(self, account_id, balance_checking,balance_savings):
@@ -83,7 +83,7 @@ class BankCustomer():
 #         self.balance_checking=balance_checking
 #         self.balance_savings=balance_savings
 
-
+    
 if __name__== "__main__":
     print("********** Welcome to ACME Bank **********")
     start_option=int(input("What do you want to do? \n(1) Add new customer \n(2) Log in \n"))

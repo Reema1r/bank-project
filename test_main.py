@@ -1,31 +1,37 @@
-# import unittest
-# from main import fizzbuzz,is_palindrome,is_prime,are_anagrams,convert_temperature,is_valid_password,ShoppingCart
+import unittest
+from main import BankCustomer
 
 
-# class BankCustomer(unittest.TestCase):
+class TestBankCustomer(unittest.TestCase):
 
-#     def setUp(self):
-#         self.new_cart=BankCustomer() #create new bank customer object
-
-#     def test_add_item(self):
-#         self.assertEqual(self.new_cart.add_item("Cake", 10, 0), False) # addinng item with zero quantity
-#         self.assertEqual(self.new_cart.add_item("Juice", 5, -3), False) # addinng item with negative quantity
-#         self.assertEqual(self.new_cart.add_item("Chips", 3, 2), True) # addinng valid item 
-
-#     def test_remove(self):
-#         self.assertEqual(self.new_cart.add_item("Chips", 3, 2), True)
-#         self.assertEqual(self.new_cart.remove_item("Chips"),True)  # removing item in the cart
-#         self.assertEqual(self.new_cart.remove_item("Bread"),False)  # removing item not in the cart
-
-#     def test_get_total(self):
-#         self.assertEqual(self.new_cart.get_total(), 0.0) # calculating the total for empty cart
-#         self.new_cart.add_item("Cake", 10, 2)
-#         self.new_cart.add_item("Juice", 5, 3)
-#         self.assertEqual(self.new_cart.get_total(), 35.0)
+    def setUp(self):
+        self.customer1 =BankCustomer("Reema","Radi","pass1234") 
+        self.customer2 =BankCustomer("reema","Radi","r01222") 
+        self.customer3 =BankCustomer("Shouq","Radi","Sh@@ouq1") 
+        # self.customer4 =BankCustomer("233","59","sara0909") 
+    def test_add_new_customer(self):
+        self.assertEqual(self.customer1.add_new_customer(), False) # if customer aleady exists
+        self.assertEqual(self.customer2.add_new_customer(), False) # if the customer already exists (case insensitive)
+        self.assertEqual(self.customer3.add_new_customer(), True) # if the customer doesn't exists
+        # self.assertEqual(self.customer4.add_new_customer(),False)
         
-
-
     
 
-# if __name__== "__main__":
-#     unittest.main(verbosity=2)
+
+class TestAccount(unittest.TestCase):
+
+    def setUp(self):
+        self.customer1 =BankCustomer("Reema","Radi","pass1234") 
+        self.customer2 =BankCustomer("reema","Radi","r01222") 
+        self.customer3 =BankCustomer("Shouq","Radi","Sh@@ouq1") 
+        # self.customer4 =BankCustomer("233","59","sara0909") 
+    def test_add_new_customer(self):
+        self.assertEqual(self.customer1.add_new_customer(), False) # if customer aleady exists
+        self.assertEqual(self.customer2.add_new_customer(), False) # if the customer already exists (case insensitive)
+        self.assertEqual(self.customer3.add_new_customer(), True) # if the customer doesn't exists
+        # self.assertEqual(self.customer4.add_new_customer(),False)
+        
+    
+
+if __name__== "__main__":
+    unittest.main(verbosity=2)
