@@ -13,13 +13,13 @@ bank_file="bank.csv"
 # Check if the CSV exists before creating a new one to ensure that existing data is not erased
 # If doesn't exist, then create a new CSV file with the following predifined info
 if not os.path.isfile(bank_file):
-    fields = ["account_id", "first_name", "last_name", "password", "balance_checking", "balance_savings"]
+    fields = ["account_id", "first_name", "last_name", "password", "balance_checking", "balance_savings","overdraft_count","is_account_active"]
     rows = [
-        ["10001", "suresh", "sigera", "juagw362", "1000", "10000"],
-        ["10002", "james", "taylor", "idh36%@#FGd", "10000", "10000"],
-        ["10003", "melvin", "gordon", "uYWE732g4ga1", "2000", "20000"],
-        ["10004", "stacey", "abrams", "DEU8_qw3y72$", "2000", "20000"],
-        ["10005", "jake", "paul", "d^dg23g)@", "100000", "100000"]
+        ["10001", "suresh", "sigera", "juagw362", "1000", "10000",0,True],
+        ["10002", "james", "taylor", "idh36%@#FGd", "10000", "10000",0,True],
+        ["10003", "melvin", "gordon", "uYWE732g4ga1", "2000", "20000",0,True],
+        ["10004", "stacey", "abrams", "DEU8_qw3y72$", "2000", "20000",0,True],
+        ["10005", "jake", "paul", "d^dg23g)@", "100000", "100000",0,True]
     ]
 
     with open(bank_file, 'w', newline="") as csvfile:
@@ -30,8 +30,8 @@ if not os.path.isfile(bank_file):
 
 
 class BankCustomer():
-    def __init__(self, account_id,first_name,last_name,password, balance_checking =0 , balance_savings=0, overdraft_count=0,is_account_active= True):
-        self.account_id=account_id
+    def __init__(self,first_name,last_name,password, balance_checking =0 , balance_savings=0, overdraft_count=0,is_account_active= True):
+        # self.account_id=account_id
         self.first_name=first_name
         self.last_name=last_name
         self.password=password
@@ -108,17 +108,48 @@ class Account():
                     return False
         
     def withdraw_options(self):
-        account_choice=int(input("Which account you want to withdraw from? \n(1) Checking account \n(2)Savings account"))
+        account_choice=int(input("Which account you want to withdraw from? \n(1) Checking account \n(2) Savings account\n"))
         if account_choice == 1:
-            withdraw_amount= float(input("Enter amount to withdraw from checking account: "))
-            self.withdraw_from_checking_account(withdraw_amount)
+            #REMOVE withdraw_amount= float(input("Enter amount to withdraw from checking account: "))
+            self.perform_withdraw(withdraw_amount, "checking")
             
         elif account_choice == 2:
-            withdraw_amount= float(input("Enter amount to withdraw from savings account: "))
-            self.withdraw_from_savings_account(withdraw_amount)
+            #REMOVE withdraw_amount= float(input("Enter amount to withdraw from savings account: "))
+            self.withdraw(withdraw_amount,"savings")
         else:
             print("Invalid choice. Please choose 1 or 2")
             
+    def perform_withdraw(self, withdraw_amount, account_type):
+        #check if the validity of amount input 
+        if withdraw_amount <= 0:
+            print("Withdraw amount must be positive value")
+            return False
+        
+        #assign the balance of the account_type
+        if account_type =="checking":
+            current_balance = self.balance_checking
+            
+        else:
+            current_balance = self.balance_savings
+            
+        #check if the amount is greater than the balance
+        if withdraw_amount > current_balance:
+            print("Insufficient balance. The amount you are trying to withdraw is greater thant your checking account balance")
+            return False 
+        
+        if account_type=="checking":
+            self.balance_checking -=withdraw_amount
+            print(f"New checking account balance after withdrawal: {self.balance_checking}")
+        else:
+            self.balance_savings -=withdraw_amount
+            print(f"New checking account balance after withdrawal: {self.balance_checking}")
+            
+        # self.update_csv(account_type)
+        return True
+            
+            
+        
+        
 
 if __name__== "__main__":
     print("********** Welcome to ACME Bank **********")
