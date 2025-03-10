@@ -38,7 +38,7 @@ class TestWithdraw(unittest.TestCase):
         self.assertEqual(self.customer5.withdraw_from_checking_account(0), False) # invalid withdraw amount (zero)
         self.assertEqual(self.customer5.withdraw_from_savings_account(100), False) # withdraw without login
 
-class TestDeposite(unittest.TestCase):  
+class TestDeposit(unittest.TestCase):  
     def setUp(self):
         self.customer6 =BankCustomer("Reema","Radi","pass1234") 
         self.customer6.balance_checking=1000

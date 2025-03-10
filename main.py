@@ -30,7 +30,8 @@ if not os.path.isfile(bank_file):
 
 
 class BankCustomer():
-    def __init__(self, first_name,last_name,password, balance_checking =0 , balance_savings=0, overdraft_count=0,is_account_active= True):
+    def __init__(self, account_id,first_name,last_name,password, balance_checking =0 , balance_savings=0, overdraft_count=0,is_account_active= True):
+        self.account_id=account_id
         self.first_name=first_name
         self.last_name=last_name
         self.password=password
@@ -80,22 +81,33 @@ class BankCustomer():
             csvwriter.writerow(new_customer_info) # add the new customer info to the CSV file
             print(f"The new customer [{self.first_name} {self.last_name}] has been added successfully")
         return True
-
-# class Account():
-#     def __init__(self, account_id, balance_checking,balance_savings):
-#         self.account_id=account_id
-#         self.balance_checking=balance_checking
-#         self.balance_savings=balance_savings
-        
-#     def wihdraw_from_checking_account():
-#         pass
-        
-#     def wihdraw_from_savings_account(): 
-#         pass
-    
     
 
-    
+
+class Account():
+    def __init__(self, account_id, password, balance_checking=0,balance_savings=0):
+        self.account_id=account_id
+        self.password=password
+        self.balance_checking=balance_checking
+        self.balance_savings=balance_savings
+        
+    def login(self):
+        with open(bank_file , "r",newline="") as file:
+                    csvfile=csv.reader(file)
+                    next(csvfile) 
+                    for lines in csvfile:
+                        if lines: 
+                            login_account_id = lines[0].strip()
+                            login_password = lines[3].strip()
+                            
+                            if login_account_id == self.account_id and login_password == self.password:
+                                print(f"Welcome!")
+                                return True
+                            
+                    print("Invalid login attempt. Please check your details and try again")
+                    return False
+        
+
 if __name__== "__main__":
     print("********** Welcome to ACME Bank **********")
     start_option=int(input("What do you want to do? \n(1) Add new customer \n(2) Log in \n"))
@@ -108,7 +120,10 @@ if __name__== "__main__":
         new_customer.add_new_customer()
     
     elif start_option == 2:
-        pass
+        account_id =input("Enter account id: ")
+        password =input("Enter password: ")
+        existing_customer = Account(account_id, password)  
+        existing_customer.login()
     else:
         print("Invalid input")
 
