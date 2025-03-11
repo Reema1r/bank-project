@@ -1,71 +1,42 @@
 import unittest
 from main import BankCustomer 
-# ,Account
+from main import Account
 
 # ************ This test works fine ************
-# class TestBankCustomer(unittest.TestCase):
-#     def setUp(self):
-#         self.customer1 =BankCustomer("Reema","Radi","pass1234",0,0) 
-#         self.customer2 =BankCustomer("reema","Radi","r01222",0,0) 
-#         self.customer3 =BankCustomer("Shouq","Radi","Sh@@ouq1",0,0) 
+class TestBankCustomer(unittest.TestCase):
+    def setUp(self):
+        self.customer1 =BankCustomer("Reema","Radi","pass1234",0,0) 
+        self.customer2 =BankCustomer("reema","Radi","r01222",0,0) 
+        self.customer3 =BankCustomer("Shouq","Radi","Sh@@ouq1",0,0) 
                 
-#     def test_add_new_customer(self): 
-#         self.assertEqual(self.customer1.add_new_customer(), False) # if customer aleady exists
-#         self.assertEqual(self.customer2.add_new_customer(), False) # if the customer already exists (case insensitive)
-#         self.assertEqual(self.customer3.add_new_customer(), True) # if the customer doesn't exists
+    def test_add_new_customer(self): 
+        self.assertEqual(self.customer1.add_new_customer(), False) # if customer aleady exists
+        self.assertEqual(self.customer2.add_new_customer(), False) # if the customer already exists (case insensitive)
+        self.assertEqual(self.customer3.add_new_customer(), True) # if the customer doesn't exists
     
     
     
-    
-# class TestWithdraw(unittest.TestCase):    
-#     def setUp(self):
-#         self.customer5 =Account("10003","uYWE732g4ga1") 
-#         self.customer5.balance_checking=1500
-#         self.customer5.balance_savings=1000
+# ************ This test works fine ************
+class TestWithdraw(unittest.TestCase):    
+    def setUp(self):
+        self.customer5 =Account("10009","pass1234") 
+        self.customer5.balance_checking=1500
+        self.customer5.balance_savings=-30
         
+    def test_withdraw_from_account(self):
+        self.assertEqual(self.customer5.perform_withdraw(-30,"checking"), False) # unsuccessful withdraw (negative withdraw amount)
+        self.assertEqual(self.customer5.perform_withdraw(0, "savings"), False) # unsuccessful withdraw (zero withdraw amount)
+
+        # Test if the account balance > 0
+        self.assertEqual(self.customer5.perform_withdraw(500,"checking"), True) # successful withdraw
+        self.assertEqual(self.customer5.perform_withdraw(4000,"checking"), False) # unsuccessful withdraw (insufficient account balance)
         
-#     def test_withdraw_from_checking_account(self):
-#         self.assertEqual(self.customer5.withdraw_from_checking_account(500), True) # successful withdraw
-        # self.assertEqual(self.customer5.withdraw_from_checking_account(4000), False) # invalid withdraw, insufficient balance
-        # self.assertEqual(self.customer5.withdraw_from_checking_account(-300), False) # invalid withdraw amount (negative)
-        # self.assertEqual(self.customer5.withdraw_from_checking_account(0), False) # invalid withdraw amount (zero)
-        # self.assertEqual(self.customer5.withdraw_from_checking_account(150), False) # withdraw without login
+        # Test if the account balance <0
+        self.assertEqual(self.customer5.perform_withdraw(150,"savings"), False) # unsuccessful withdraw (negative balance and trying to withdraw more than 100$)
+        self.assertEqual(self.customer5.perform_withdraw(80, "savings"), False) # unsuccessful withdraw (negative balance and withdraw amount is les than 100$ but will result in account balance less than 100$ )
         
-        
-    # def test_withdraw_from_savings_account(self):
-    #     self.assertEqual(self.customer5.withdraw_from_savings_account(500), True) # successful withdraw
-    #     self.assertEqual(self.customer5.withdraw_from_savings_account(600), False) # invalid withdraw, insufficient balance
-    #     self.assertEqual(self.customer5.withdraw_from_savings_account(-30), False) # invalid withdraw amount (negative)
-    #     self.assertEqual(self.customer5.withdraw_from_checking_account(0), False) # invalid withdraw amount (zero)
-    #     self.assertEqual(self.customer5.withdraw_from_savings_account(100), False) # withdraw without login
 
 
 
-
-
-
-
-
-
-
-# class TestDeposit(unittest.TestCase):  
-#     def setUp(self):
-#         self.customer6 =BankCustomer("Reema","Radi","pass1234") 
-#         self.customer6.balance_checking=1000
-#         self.customer6.balance_savings=1000 
-        
-#     def test_deposit_to_checking_account(self):
-#         self.assertEqual(self.customer6.deposit_to_checking_account(500), True) # successful deposit
-#         self.assertEqual(self.customer6.deposit_to_checking_account(-200), False) # invalid deposit amount (negative)
-#         self.assertEqual(self.customer6.deposit_to_checking_account(0), False) # invalid deposit amount (zero)
-#         self.assertEqual(self.customer6.deposit_to_checking_account(50), False) # deposit without login
-    
-        
-#     def test_deposit_to_savings_account(self):
-#         self.assertEqual(self.customer6.deposit_to_savings_account(500), True) # successful deposit
-#         self.assertEqual(self.customer6.deposit_to_savings_account(-200), False) # invalid deposit amount (negative)
-#         self.assertEqual(self.customer6.deposit_to_savings_account(0), False) # invalid deposit amount (zero)
-#         self.assertEqual(self.customer6.deposit_to_savings_account(50), False) # deposit without login
-    
 if __name__== "__main__":
     unittest.main(verbosity=2)

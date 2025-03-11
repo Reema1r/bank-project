@@ -39,7 +39,7 @@ class BankCustomer():
         self.overdraft_count=overdraft_count
         self.is_account_active=is_account_active
 
-    def check_customer_existance(self):
+    def check_customer_existence(self):
         existing_ids=[]
         existing_customers=[]
         new_customer_id=100001 #if the file empty, assign the id to 10001
@@ -71,7 +71,7 @@ class BankCustomer():
         return True, new_customer_id
 
     def add_new_customer(self):
-        exists, new_customer_id = self.check_customer_existance()
+        exists, new_customer_id = self.check_customer_existence()
         if not exists:  # if exists = False , then not exists = True >> customer exists (can't add)
                         # if exists = True , then not exists = False >> customer doesn't exists (can add)
             return False
@@ -91,72 +91,90 @@ class BankCustomer():
     
 
 
-# class Account():
-#     def __init__(self, account_id, password, balance_checking=0,balance_savings=0):
-#         self.account_id=account_id
-#         self.password=password
-#         self.balance_checking=balance_checking
-#         self.balance_savings=balance_savings
+class Account():
+    def __init__(self, account_id, password, balance_checking=0,balance_savings=0,overdraft_count=0,is_account_active= True):
+        self.account_id=account_id
+        self.password=password
+        self.balance_checking=balance_checking
+        self.balance_savings=balance_savings
+        self.overdraft_count=overdraft_count
+        self.is_account_active= is_account_active
         
-#     def login(self):
-#         with open(bank_file , "r",newline="") as file:
-#                     csvfile=csv.reader(file)
-#                     next(csvfile) 
-#                     for lines in csvfile:
-#                         if lines: 
-#                             login_account_id = lines[0].strip()
-#                             login_password = lines[3].strip()
+    def login(self):
+        with open(bank_file , "r",newline="") as file:
+                    csvfile=csv.reader(file)
+                    next(csvfile) 
+                    for lines in csvfile: 
+                        if lines: 
+                            account_id = lines[0].strip() #retrieves the id (colomn 1)
+                            password = lines[3].strip() #retrieves the password (colomn 4)
                             
-#                             if login_account_id == self.account_id and login_password == self.password:
-#                                 print(f"Welcome!")
-#                                 return True
+                            #check if the retrieved id and password matches the id and password entered
+                            if account_id == self.account_id and password == self.password:
+                                print(f"\nWelcome!,{lines[1]} {lines[2]}")
+                                return True
                             
-#                     print("Invalid login attempt. Please check your details and try again")
-#                     return False
+                    print("Invalid login attempt. Please check your details and try again")
+                    return False
         
-#     def withdraw_options(self):
-#         account_choice=int(input("Which account you want to withdraw from? \n(1) Checking account \n(2) Savings account\n"))
-#         if account_choice == 1:
-#             #REMOVE withdraw_amount= float(input("Enter amount to withdraw from checking account: "))
-#             self.perform_withdraw(withdraw_amount, "checking")
+    def withdraw_options(self):
+        account_choice=int(input("Which account you want to withdraw from? \n(1) Checking account \n(2) Savings account\n"))
+        if account_choice == 1:
+            withdraw_amount= float(input("Enter amount to withdraw from checking account: "))
+            self.perform_withdraw(withdraw_amount, "checking")
             
-#         elif account_choice == 2:
-#             #REMOVE withdraw_amount= float(input("Enter amount to withdraw from savings account: "))
-#             self.withdraw(withdraw_amount,"savings")
-#         else:
-#             print("Invalid choice. Please choose 1 or 2")
+        elif account_choice == 2:
+            withdraw_amount= float(input("Enter amount to withdraw from savings account: "))
+            self.perform_withdraw(withdraw_amount,"savings")
+        else:
+            print("Invalid choice. Please choose 1 or 2")
             
-#     def perform_withdraw(self, withdraw_amount, account_type):
-#         #check if the validity of amount input 
-#         if withdraw_amount <= 0:
-#             print("Withdraw amount must be positive value")
-#             return False
+            
+    def perform_withdraw(self, withdraw_amount, account_type):
+        #check if the user is logged in
+        if not self.is_account_active:
+            print("Account is deactivated due to excessive overdrafts")
+            return False
         
-#         #assign the balance of the account_type
-#         if account_type =="checking":
-#             current_balance = self.balance_checking
-            
-#         else:
-#             current_balance = self.balance_savings
-            
-#         #check if the amount is greater than the balance
-#         if withdraw_amount > current_balance:
-#             print("Insufficient balance. The amount you are trying to withdraw is greater thant your checking account balance")
-#             return False 
+        #check if the input amount is valid 
+        if withdraw_amount <= 0:
+            print("Withdraw amount must be positive value")
+            return False
         
-#         if account_type=="checking":
-#             self.balance_checking -=withdraw_amount
-#             print(f"New checking account balance after withdrawal: {self.balance_checking}")
-#         else:
-#             self.balance_savings -=withdraw_amount
-#             print(f"New checking account balance after withdrawal: {self.balance_checking}")
-            
-#         # self.update_csv(account_type)
-#         return True
+        #assign the current balance to be the balance of the account_type entred
+        if account_type =="checking":
+            current_balance = self.balance_checking
+        else:
+            current_balance = self.balance_savings
             
             
+        if current_balance<0:
+            if withdraw_amount >100:
+                print("Your account is negative, you can not withdraw more than 100$")
+                return False
+            if (current_balance - withdraw_amount) < -100:
+                print("Your withdrawal would result in an account balance less than 100$")
+                return False
+            self.overdraft_count +=1
+            
+            if self.overdraft_count >=2:
+                self.is_account_active = False
+            
+        if withdraw_amount > current_balance:
+            print("Sorry. The amount you are trying to withdraw is greater than your account balance")
+            return False
         
-        
+        if account_type == "checking":
+            self.balance_checking-=withdraw_amount
+            print(f"New checking account balance after withdrawal: {self.balance_checking}")
+        else:
+            self.balance_savings-=withdraw_amount
+            print(f"New savings account balance after withdrawal: {self.balance_savings}")
+            
+        # self.update_csv(account_type)
+        return True
+    
+
 
 if __name__== "__main__":
     print("********** Welcome to ACME Bank **********")
@@ -170,12 +188,11 @@ if __name__== "__main__":
         new_customer.add_new_customer()
     
     elif start_option == 2:
-        pass
-        # account_id =input("Enter account id: ")
-        # password =input("Enter password: ")
-        # existing_customer = Account(account_id, password)  
-        # if existing_customer.login():
-        #     existing_customer.withdraw_options()
+        account_id =input("Enter account id: ")
+        password =input("Enter password: ")
+        existing_customer = Account(account_id, password)  
+        if existing_customer.login():
+            existing_customer.withdraw_options()
     else:
         print("Invalid input")
 
