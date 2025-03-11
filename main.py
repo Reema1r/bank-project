@@ -116,7 +116,8 @@ class Account():
                             
                     print("Invalid login attempt. Please check your details and try again")
                     return False
-        
+                
+                
     def withdraw_options(self):
         account_choice=int(input("Which account you want to withdraw from? \n(1) Checking account \n(2) Savings account\n"))
         if account_choice == 1:
@@ -173,6 +174,18 @@ class Account():
             
         # self.update_csv(account_type)
         return True
+    
+    def deposit_options(self):
+        account_choice=int(input("Which account you want to deposit to? \n(1) Checking account \n(2) Savings account\n"))
+        if account_choice == 1:
+            deposit_amount= float(input("Enter amount to deposit to checking account: "))
+            self.perform_deposit(deposit_amount, "checking")
+            
+        elif account_choice == 2:
+            deposit_amount= float(input("Enter amount to deposit to savings account: "))
+            self.perform_deposit(deposit_amount,"savings")
+        else:
+            print("Invalid choice. Please choose 1 or 2")
     
     def perform_deposit(self, deposit_amount, account_type):
         #check if the input amount is valid 
