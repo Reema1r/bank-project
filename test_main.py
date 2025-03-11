@@ -1,30 +1,31 @@
 import unittest
-from main import BankCustomer ,Account
+from main import BankCustomer 
+# ,Account
 
-
-class TestBankCustomer(unittest.TestCase):
-
-    def setUp(self):
-        self.customer1 =BankCustomer("Reema","Radi","pass1234",0,0) 
-        self.customer2 =BankCustomer("reema","Radi","r01222",0,0) 
-        self.customer3 =BankCustomer("Shouq","Radi","Sh@@ouq1",0,0) 
-        
-        
-        # this test works fine
-    # def test_add_new_customer(self): 
-        # self.assertEqual(self.customer1.add_new_customer(), False) # if customer aleady exists
-        # self.assertEqual(self.customer2.add_new_customer(), False) # if the customer already exists (case insensitive)
-        # self.assertEqual(self.customer3.add_new_customer(), True) # if the customer doesn't exists
+# ************ This test works fine ************
+# class TestBankCustomer(unittest.TestCase):
+#     def setUp(self):
+#         self.customer1 =BankCustomer("Reema","Radi","pass1234",0,0) 
+#         self.customer2 =BankCustomer("reema","Radi","r01222",0,0) 
+#         self.customer3 =BankCustomer("Shouq","Radi","Sh@@ouq1",0,0) 
+                
+#     def test_add_new_customer(self): 
+#         self.assertEqual(self.customer1.add_new_customer(), False) # if customer aleady exists
+#         self.assertEqual(self.customer2.add_new_customer(), False) # if the customer already exists (case insensitive)
+#         self.assertEqual(self.customer3.add_new_customer(), True) # if the customer doesn't exists
     
-class TestWithdraw(unittest.TestCase):    
-    def setUp(self):
-        self.customer5 =Account("10003","uYWE732g4ga1") 
-        self.customer5.balance_checking=1500
-        self.customer5.balance_savings=1000
+    
+    
+    
+# class TestWithdraw(unittest.TestCase):    
+#     def setUp(self):
+#         self.customer5 =Account("10003","uYWE732g4ga1") 
+#         self.customer5.balance_checking=1500
+#         self.customer5.balance_savings=1000
         
         
-    def test_withdraw_from_checking_account(self):
-        self.assertEqual(self.customer5.withdraw_from_checking_account(500), True) # successful withdraw
+#     def test_withdraw_from_checking_account(self):
+#         self.assertEqual(self.customer5.withdraw_from_checking_account(500), True) # successful withdraw
         # self.assertEqual(self.customer5.withdraw_from_checking_account(4000), False) # invalid withdraw, insufficient balance
         # self.assertEqual(self.customer5.withdraw_from_checking_account(-300), False) # invalid withdraw amount (negative)
         # self.assertEqual(self.customer5.withdraw_from_checking_account(0), False) # invalid withdraw amount (zero)
