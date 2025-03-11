@@ -131,7 +131,7 @@ class Account():
             
             
     def perform_withdraw(self, withdraw_amount, account_type):
-        #check if the user is logged in
+        #check if the user is active
         if not self.is_account_active:
             print("Account is deactivated due to excessive overdrafts")
             return False
@@ -174,25 +174,28 @@ class Account():
         # self.update_csv(account_type)
         return True
     
+    def perform_deposit(self, deposit_amount, account_type):
+        pass
 
 
-if __name__== "__main__":
-    print("********** Welcome to ACME Bank **********")
-    start_option=int(input("What do you want to do? \n(1) Add new customer \n(2) Log in \n"))
 
-    if start_option == 1:
-        first_name =input("Enter first name: ")
-        last_name =input("Enter last name: ")
-        password =input("Enter password: ")
-        new_customer= BankCustomer(first_name,last_name, password) #create a new object of BankCustomer class
-        new_customer.add_new_customer()
+# if __name__== "__main__":
+#     print("********** Welcome to ACME Bank **********")
+#     start_option=int(input("What do you want to do? \n(1) Add new customer \n(2) Log in \n"))
+
+#     if start_option == 1:
+#         first_name =input("Enter first name: ")
+#         last_name =input("Enter last name: ")
+#         password =input("Enter password: ")
+#         new_customer= BankCustomer(first_name,last_name, password) #create a new object of BankCustomer class
+#         new_customer.add_new_customer()
     
-    elif start_option == 2:
-        account_id =input("Enter account id: ")
-        password =input("Enter password: ")
-        existing_customer = Account(account_id, password)  
-        if existing_customer.login():
-            existing_customer.withdraw_options()
-    else:
-        print("Invalid input")
+#     elif start_option == 2:
+#         account_id =input("Enter account id: ")
+#         password =input("Enter password: ")
+#         existing_customer = Account(account_id, password)  
+#         if existing_customer.login():
+#             existing_customer.withdraw_options()
+#     else:
+#         print("Invalid input")
 
