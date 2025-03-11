@@ -175,27 +175,40 @@ class Account():
         return True
     
     def perform_deposit(self, deposit_amount, account_type):
-        pass
+        #check if the input amount is valid 
+        if deposit_amount <= 0:
+            print("Deposit amount must be positive value")
+            return False
+        
+        if account_type == "checking":
+            self.balance_checking+=deposit_amount
+            print(f"New checking account balance after deposit: {self.balance_checking}")
+        else:
+            self.balance_savings+=deposit_amount
+            print(f"New savings account balance after deposit: {self.balance_savings}")
+            
+        # self.update_csv(account_type)
+        return True
 
 
 
-# if __name__== "__main__":
-#     print("********** Welcome to ACME Bank **********")
-#     start_option=int(input("What do you want to do? \n(1) Add new customer \n(2) Log in \n"))
+if __name__== "__main__":
+    print("********** Welcome to ACME Bank **********")
+    start_option=int(input("What do you want to do? \n(1) Add new customer \n(2) Log in \n"))
 
-#     if start_option == 1:
-#         first_name =input("Enter first name: ")
-#         last_name =input("Enter last name: ")
-#         password =input("Enter password: ")
-#         new_customer= BankCustomer(first_name,last_name, password) #create a new object of BankCustomer class
-#         new_customer.add_new_customer()
+    if start_option == 1:
+        first_name =input("Enter first name: ")
+        last_name =input("Enter last name: ")
+        password =input("Enter password: ")
+        new_customer= BankCustomer(first_name,last_name, password) #create a new object of BankCustomer class
+        new_customer.add_new_customer()
     
-#     elif start_option == 2:
-#         account_id =input("Enter account id: ")
-#         password =input("Enter password: ")
-#         existing_customer = Account(account_id, password)  
-#         if existing_customer.login():
-#             existing_customer.withdraw_options()
-#     else:
-#         print("Invalid input")
+    elif start_option == 2:
+        account_id =input("Enter account id: ")
+        password =input("Enter password: ")
+        existing_customer = Account(account_id, password)  
+        if existing_customer.login():
+            existing_customer.withdraw_options()
+    else:
+        print("Invalid input")
 
