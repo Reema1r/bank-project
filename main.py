@@ -117,6 +117,21 @@ class Account():
                     print("Invalid login attempt. Please check your details and try again")
                     return False
                 
+    def transaction_option(self):
+        while True:
+            option = int(input("\nWhat would you like to do? \n(1) Withdraw \n(2) Deposit \n(3) Transfer Money Log out\n(4) Log out\n"))
+                    
+            if option == 1:
+                existing_customer.withdraw_options()
+            elif option == 2:
+                existing_customer.deposit_options()
+            elif option == 3:
+                pass
+                break
+            elif option == 4:
+                pass
+            else:
+                print("Invalid input. Please choose a valid option.")
                 
     def withdraw_options(self):
         account_choice=int(input("Which account you want to withdraw from? \n(1) Checking account \n(2) Savings account\n"))
@@ -221,7 +236,7 @@ if __name__== "__main__":
         password =input("Enter password: ")
         existing_customer = Account(account_id, password)  
         if existing_customer.login():
-            existing_customer.withdraw_options()
+            existing_customer.transaction_option()
     else:
         print("Invalid input")
 
