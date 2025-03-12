@@ -145,7 +145,25 @@ class Account():
                 print("Invalid input. Please choose a valid option.")
                 
                 
+    def update_csv(self):
+        #read the csv file
+        lines=[]
+        with open(bank_file , "r",newline="") as file:
+            csvreader=csv.reader(file)
+            headers = next(csvreader) # retrieve the first line of the CSV file (header line)
+            for line in csvreader:
+                if line and line[0] == self.account_id:
+                    line[4]=self.balance_checking
+                    line[5]=self.balance_savings
+                    line[6]=self.overdraft_count
+                    line[7]=self.is_account_active
+                lines.append(line)
                 
+        with open(bank_file , "w", newline="") as file:
+            csvwriter = csv.writer(file)
+            csvwriter.writerow(headers) 
+            csvwriter.writerows(lines)
+            
     def withdraw_options(self):
         account_choice=int(input("Which account you want to withdraw from? \n(1) Checking account \n(2) Savings account\n"))
         if account_choice == 1:
@@ -199,7 +217,7 @@ class Account():
             self.balance_savings-=withdraw_amount
             print(f"New savings account balance after withdrawal: {self.balance_savings}")
             
-        # self.update_csv()
+        self.update_csv()
         return True      
     
     def deposit_options(self):
@@ -227,7 +245,7 @@ class Account():
             self.balance_savings += deposit_amount
             print(f"New savings account balance after deposit: {self.balance_savings}")
             
-        # self.update_csv()
+        self.update_csv()
         return True
 
 
