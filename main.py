@@ -105,20 +105,25 @@ class Account():
         
     def login(self):
         with open(bank_file , "r",newline="") as file:
-                    csvfile=csv.reader(file)
-                    next(csvfile) 
-                    for lines in csvfile: 
-                        if lines: 
-                            account_id = lines[0].strip() #retrieves the id (colomn 1)
-                            password = lines[3].strip() #retrieves the password (colomn 4)
+            csvfile=csv.reader(file)
+            next(csvfile) 
+            for lines in csvfile: 
+                if lines: 
+                    account_id = lines[0].strip() #retrieves the id (colomn 1)
+                    password = lines[3].strip() #retrieves the password (colomn 4)
                             
-                            #check if the retrieved id and password matches the id and password entered
-                            if account_id == self.account_id and password == self.password:
-                                print(f"\nWelcome!,{lines[1]} {lines[2]}")
-                                return True
+                    #check if the retrieved id and password matches the id and password entered
+                    if account_id == self.account_id and password == self.password:
+                        self.balance_checking = float(lines[4].strip())  
+                        self.balance_savings = float(lines[5].strip())  
+                        self.overdraft_count = int(lines[6].strip())  
+                        self.is_account_active = lines[7].strip().lower() == 'true'
+                        
+                        print(f"\nWelcome!,{lines[1]} {lines[2]}")
+                        return True
                             
-                    print("Invalid login attempt. Please check your details and try again")
-                    return False
+            print("Invalid login attempt. Please check your details and try again")
+            return False
                 
     def transaction_option(self):
         while True:
