@@ -123,8 +123,12 @@ class Account():
                         return True
                             
             print("Invalid login attempt. Please check your details and try again")
-            return False
-                
+            return 
+        
+    def logout(self):
+        print("You have logged out successfuly")
+        return False
+    
     def transaction_option(self):
         while True:
             option = int(input("\nWhat would you like to do? \n(1) Withdraw \n(2) Deposit \n(3) Transfer Money \n(4) Logout\n"))
@@ -136,7 +140,7 @@ class Account():
             elif option == 3:
                 pass
             elif option == 4:
-                pass
+                self.logout()
             else:
                 print("Invalid input. Please choose a valid option.")
                 
