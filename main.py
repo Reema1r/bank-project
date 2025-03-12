@@ -30,6 +30,13 @@ if not os.path.isfile(bank_file):
 
 
 class BankCustomer():
+    """
+    This class represents a customer in the bank system. Handles customer creation and checks for duplicates
+    """
+    
+    """
+    Initializes a new customer object with the given personal and account details
+    """
     def __init__(self,first_name,last_name,password, balance_checking =0 , balance_savings=0, overdraft_count=0,is_account_active= True):
         self.first_name=first_name
         self.last_name=last_name
@@ -39,39 +46,50 @@ class BankCustomer():
         self.overdraft_count=overdraft_count
         self.is_account_active=is_account_active
 
+    """
+    This method checks if the customer already exists in the CSV file by matching their first and last name
+    Returns: A tuple (boolean,ID), first element indicates wheather the customer exists or not, the second element is either new ID or None
+    """
     def check_customer_existence(self):
-        existing_ids=[]
-        existing_customers=[]
-        new_customer_id=100001 #if the file empty, assign the id to 10001
+        existing_ids=[] # To store existing customer IDs retrieved from CSV
+        existing_customers=[] # To store existing customers names (first, last)
+        new_customer_id=100001 # Assign the ID to 10001, if the file is empty
+        
         try:
             with open(bank_file , "r",newline="") as file:
                     csvfile=csv.reader(file)
-                    next(csvfile) #to skip the header line
+                    next(csvfile) # To skip the header line
                     for lines in csvfile:
-                        if lines: # check if there is lines
+                        if lines: # To check if there is a line to proccess
                             existing_ids.append(int(lines[0]))
                             existing_customers.append((lines[1], lines[2]))
 
-            #Check if the customer already exist before adding it to the CSV file
+            #Check if the customer already exist before adding it to the CSV by comparing names
             for first, last in existing_customers:
                 first=first.lower().strip()
                 last=last.lower().strip()
                 
                 if first == self.first_name.lower().strip() and last == self.last_name.lower().strip() :
-                    print("The customer you are trying to add is already exists")
-                    return False , None
+                    print("The customer you are trying to add already exists")
+                    return False , None # Return (False, None) if the customer exists
             
+            # If the list of existing IDs is not empty, assign the new customer ID to be one higher than the max ID
             if existing_ids:
-                    new_customer_id=max(existing_ids)+1 # set the new_id to be the max id +1 
+                    new_customer_id=max(existing_ids)+1 # Set the new ID to be the max ID +1 
             
         except FileNotFoundError:
             print("Sorry,the file not found. Can't add a new customer")
             return False , None
         
-        return True, new_customer_id
+        return True, new_customer_id # Return (True, new customer ID) if customer does not exists
+
 
     def add_new_customer(self):
-        exists, new_customer_id = self.check_customer_existence()
+        """
+        This method adds a new customer to the CSV file if the customer does not already exists
+        Returns: A bool value of True if the new customer was added successfully, False otherwise
+        """
+        exists, new_customer_id = self.check_customer_existence() # Check if the customer exists
         if not exists:  # if exists = False , then not exists = True >> customer exists (can't add)
                         # if exists = True , then not exists = False >> customer doesn't exists (can add)
             return False
@@ -85,16 +103,24 @@ class BankCustomer():
                             self.overdraft_count,
                             self.is_account_active
                             ]
-
+        # Open the CSV file in append mode and add the new customer info
         with open(bank_file, "a", newline="") as csvfile: 
             csvwriter = csv.writer(csvfile)
-            csvwriter.writerow(new_customer_info) # add the new customer info to the CSV file
+            csvwriter.writerow(new_customer_info) # Add the new customer info to the CSV file
             print(f"The new customer [{self.first_name} {self.last_name}] has been added successfully")
-        return True
+        return True 
     
 
-
+# ****************************************************************************************************************
 class Account():
+    """
+    This class represents a bank account. It manage account login, logout, and handles 
+    the user account information such as balance
+    """
+    
+    """
+    Initializes a new account object with the given details
+    """
     def __init__(self, account_id, password, balance_checking=0,balance_savings=0,overdraft_count=0,is_account_active= True):
         self.account_id=account_id
         self.password=password
@@ -104,15 +130,22 @@ class Account():
         self.is_account_active= is_account_active
         
     def login(self):
+        """
+        This method reads the CSV file containing account details, checks if the entered 
+        account ID and password match any existing account, and if so, retrieve the account details
+        (checking balance, savings balance, overdraft count, account status). 
+
+        Returns: A boolean value of True if login is successful, False otherwise
+        """
         with open(bank_file , "r",newline="") as file:
             csvfile=csv.reader(file)
             next(csvfile) 
             for lines in csvfile: 
                 if lines: 
-                    account_id = lines[0].strip() #retrieves the id (colomn 1)
+                    account_id = lines[0].strip() #retrieves the ID (colomn 1)
                     password = lines[3].strip() #retrieves the password (colomn 4)
                             
-                    #check if the retrieved id and password matches the id and password entered
+                    # Check if the retrieved id and password matches the id and password entered, then load account details if the login is successful
                     if account_id == self.account_id and password == self.password:
                         self.balance_checking = float(lines[4].strip())  
                         self.balance_savings = float(lines[5].strip())  
@@ -130,7 +163,10 @@ class Account():
         return False
                 
     def transaction_option(self):
-            
+        """
+        This method asks the user to select a transaction option to perform the corresponding transaction,
+        if the entered option is invalid option, the user is will be asked again for a valid input
+        """
         while True:
             option = int(input("\nWhat would you like to do? \n(1) Withdraw \n(2) Deposit \n(3) Transfer Money \n(4) Logout\n"))
                     
@@ -147,7 +183,11 @@ class Account():
                 
                 
     def update_csv(self):
-        
+        """
+        This method updates the bank CSV file and ensures that the CSV file always has the latest info for the account after a transaction
+        It will read the CSV file and looks for the account matching the current account ID
+        If match found, if will update the info and writes the updated account info back into the CSV file
+        """
         lines=[]
         with open(bank_file , "r",newline="") as file:
             csvreader=csv.reader(file)
@@ -165,9 +205,16 @@ class Account():
             csvwriter.writerow(headers) 
             csvwriter.writerows(lines)
             
-                
+# ****************************************************************
     def withdraw_options(self):
+        """
+        This method asks the user to choose which account to withdraw from (checking or savings)
+        Depending on the user choice, it requests the withdrawal amount and calls 
+        `perform_withdraw` method to perform the withdraw
+        """
+        
         account_choice=int(input("Which account you want to withdraw from? \n(1) Checking account \n(2) Savings account\n"))
+        
         if account_choice == 1:
             withdraw_amount= float(input("Enter amount to withdraw from checking account: "))
             self.perform_withdraw(withdraw_amount, "checking")
@@ -180,43 +227,53 @@ class Account():
             
     
     def perform_withdraw(self, withdraw_amount, account_type):
+        """
+        This method processes the withdrawal for the given account type (checking or savings)
+        It checks and ensures that the withdrawal amount is valid and the account balance will not go below -100 
+        It also updates the account balances, applies overdraft fees, and deactivates the account after 2 overdrafts
+        """
+        # Check if the account has been deactivated
         if self.overdraft_count == 2:
             print("acoount is deactivated due to excessive overdrafts")
             self.logout()
             return False
         
+        # Set the current balance based on the account type
         if account_type =="checking":
             current_balance = self.balance_checking
         else:
             current_balance = self.balance_savings
             
+        #  Ensure that the withdraw amount is positive
         if withdraw_amount<=0:
             print("withdraw amount must be positive")
             return False
         
-        
-        # check if the withdrawal can be made without going below -100
+        # Check if the withdrawal can be made without going below -100
         if (current_balance - withdraw_amount) < -100:
-            print("negative result")
+            print("Cannot withdraw, balance will exceed overdraft limit")
             return False
         
+        # If the current balance is non negative
         if current_balance >= 0:
             if account_type == "checking":
                 self.balance_checking -= withdraw_amount
                 print(f"New checking account balance after withdrawal: {self.balance_checking}")
+                # Check if the checking balance became less than zero, then apply overdraft fee
                 if self.balance_checking<0:
                     self.overdraft_count+=1
                     self.balance_checking-=35
+                    
             else:
                 self.balance_savings -= withdraw_amount
                 print(f"New savings account balance after withdrawal: {self.balance_savings}")
-                if self.balance_checking<0:
+                # Check if the savings balance became less than zero, then apply overdraft fee
+                if self.balance_savings<0:
                     self.overdraft_count+=1
-                    self.balance_checking-=35
+                    self.balance_savings-=35
         
-    
+        # If the current balance is negative
         else:
-            
             if account_type == "checking":
                 self.balance_checking -= withdraw_amount
                 self.balance_checking-=35
@@ -228,20 +285,24 @@ class Account():
 
             
             self.overdraft_count += 1
+            # Check if the overdraft count reaches 2, if so, deactivate the account
             if self.overdraft_count >= 2:
                 self.is_account_active = False
                 print("Account deactivated due to excessive overdrafts.")
                 self.update_csv()
-                # self.logout()
                 
-                
-        
         self.update_csv()
-
         return True
     
     def deposit_options(self):
+        """
+        This method asks the user to choose which account to deposit to (checking or savings)
+        Depending on the user choice, it requests the deposit amount and calls 
+        `perform_deposit` method to perform the deposit
+        """
+        
         account_choice=int(input("Which account you want to deposit to? \n(1) Checking account \n(2) Savings account\n"))
+        
         if account_choice == 1:
             deposit_amount= float(input("Enter amount to deposit to checking account: "))
             self.perform_deposit(deposit_amount, "checking")
@@ -252,8 +313,13 @@ class Account():
         else:
             print("Invalid choice. Please choose 1 or 2")
     
+    
     def perform_deposit(self, deposit_amount, account_type):
-        #check if the input amount is valid 
+        """
+        This method processes the deposit for the given account type (checking or savings)
+        It checks and ensures that the deposit amount is valid, then updates the account balances and save changes to the CSV file
+        """
+        # Check if the input amount is valid 
         if deposit_amount <= 0:
             print("Deposit amount must be positive value")
             return False
@@ -270,28 +336,43 @@ class Account():
 
 
     def get_recipient_account(self, recipient_account_id):
+        """
+        This method retrieve the recipient account by seaching for their account ID in the bank file
+        Return: Account object if found, otherwise None
+        """
         # Try to find the recipient account from the bank file
         with open(bank_file, "r", newline="") as file:
             csvfile = csv.reader(file)
             next(csvfile)  
             for lines in csvfile:
                 if lines and lines[0] == recipient_account_id:
-                    # Returning Account object for the recipient
+                    # Returning recipient account details 
                     recipient_account = Account(lines[0], lines[3], float(lines[4]), float(lines[5]), int(lines[6]), lines[7].lower() == 'true')
                     return recipient_account
         return None  
 
     def transfer_money(self):
+        """
+        This method handles transfers transactions including (checking to savings, savings to checking or to another customer account)
+        It asks the user which account to transfer from, the transfer amount, and the recipient account ID. 
+        """
         transfer_option = int(input("Which account do you want to transfer from? \n(1) Checking to Savings \n(2) Savings to Checking \n(3) To another customer account\n"))
+        
         
         if transfer_option == 1:
             transferred_amount = float(input("Enter amount to transfer from checking to savings: "))
+            
+            # Ensure that the transfer amount is positive
             if transferred_amount <=0:
                 print("Transfer amout must be positive value")
                 return False
+            
+            # Check if account balance is sufficient 
             if transferred_amount >self.balance_checking:
                 print("Can not transfer due to insufficient balance in checking account")
                 return False
+            
+            # Update account balances after transfer
             self.balance_checking-=transferred_amount
             self.balance_savings+=transferred_amount
             print(f"Transferred {transferred_amount} from checking to savings")
@@ -299,12 +380,18 @@ class Account():
             
         elif transfer_option == 2:
             transferred_amount = float(input("Enter amount to transfer from savings to checking: "))
+            
+            # Ensure that the transfer amount is positive
             if transferred_amount <=0:
                 print("Transfer amout must be positive value")
                 return False
+            
+            # Check if account balance is sufficient 
             if transferred_amount >self.balance_checking:
                 print("Can not transfer due to insufficient balance in savings account")
                 return False
+            
+            # Update account balances after transfer
             self.balance_checking+=transferred_amount
             self.balance_savings-=transferred_amount
             print(f"Transferred {transferred_amount} from savings to checking")
@@ -315,16 +402,19 @@ class Account():
             account_to_transfer_from=int(input("Which account do you want to transfer from? \n(1) Checking \n(2) Savings\n"))
             transferred_amount = float(input("Enter amount to transfer to another customer account: "))
             
+            # Ensure that the transfer amount is positive
             if transferred_amount <=0:
                 print("Transfer amout must be positive value")
                 return False
             
+            # Retrieve the recipient account 
             recipient_account = self.get_recipient_account(recipient_account_id)
-            if not recipient_account:
+            if not recipient_account: # Not found
                 print("Recipient account not found")
                 return False
             
             
+            # Manages transfer from checking account
             if account_to_transfer_from == 1:
                 if transferred_amount > self.balance_checking:
                     print("Can not transfer due to insufficient balance in checking account")
@@ -333,6 +423,7 @@ class Account():
                 recipient_account.balance_checking += transferred_amount  
                 print(f"Transferred {transferred_amount} from your checking to recipient checking account")
         
+            # Manages transfer from savings account
             elif account_to_transfer_from == 2:
                 if transferred_amount > self.balance_savings:
                     print("Can not transfer due to insufficient balance in checking account")
