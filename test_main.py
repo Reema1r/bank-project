@@ -8,14 +8,20 @@ class TestBankCustomer(unittest.TestCase):
         self.customer1 =BankCustomer("Reema","Radi","pass1234",0,0) 
         self.customer2 =BankCustomer("reema","Radi","r01222",0,0) 
         self.customer3 =BankCustomer("Shouq","Radi","Sh@@ouq1",0,0) 
+        self.customer4 = BankCustomer("rafeef","radi","pass12345@",0,0)
                 
     def test_add_new_customer(self): 
         self.assertEqual(self.customer1.add_new_customer(), False) # if customer aleady exists
         self.assertEqual(self.customer2.add_new_customer(), False) # if the customer already exists (case insensitive)
         self.assertEqual(self.customer3.add_new_customer(), True) # if the customer doesn't exists
     
-    
-    
+    def test_check_customer_existence(self):
+        exists, _ = self.customer1.check_customer_existence() #customer exists
+        self.assertFalse(exists)
+        
+        exists, _ =self.customer4.check_customer_existence() # customer does not exists
+        self.assertEqual(exists,True)
+
 
 class TestWithdraw(unittest.TestCase):    
     def setUp(self):
@@ -45,7 +51,7 @@ class TestDeposit(unittest.TestCase):
         self.customer6.balance_savings=800
         
     def test_deposit_to_account(self):
-        self.assertEqual(self.customer6.perform_deposit(200,"checking"), True) # successful deposit
+        self.assertEqual(self.customer6.perform_deposit(200,"checking"), 300) # successful deposit
         self.assertEqual(self.customer6.perform_deposit(-200,"checking"), False) # unsuccessful deposit (negative deposit amount)
         self.assertEqual(self.customer6.perform_deposit(0 ,"savings" ), False) # unsuccessful deposit (zero deposit amount)
         

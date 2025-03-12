@@ -130,6 +130,7 @@ class Account():
         return False
                 
     def transaction_option(self):
+            
         while True:
             option = int(input("\nWhat would you like to do? \n(1) Withdraw \n(2) Deposit \n(3) Transfer Money \n(4) Logout\n"))
                     
@@ -146,7 +147,7 @@ class Account():
                 
                 
     def update_csv(self):
-        #read the csv file
+        
         lines=[]
         with open(bank_file , "r",newline="") as file:
             csvreader=csv.reader(file)
@@ -177,49 +178,67 @@ class Account():
         else:
             print("Invalid choice. Please choose 1 or 2")
             
+    
     def perform_withdraw(self, withdraw_amount, account_type):
-        #check if the user is active
-        if not self.is_account_active:
-            print("Account is deactivated due to excessive overdrafts")
+        if self.overdraft_count == 2:
+            print("acoount is deactivated due to excessive overdrafts")
+            self.logout()
             return False
         
-        #check if the input amount is valid 
-        if withdraw_amount <= 0:
-            print("Withdraw amount must be positive value")
-            return False
-        
-        #assign the current balance to be the balance of the account_type entred
         if account_type =="checking":
             current_balance = self.balance_checking
         else:
             current_balance = self.balance_savings
             
-            
-        if current_balance<0:
-            if withdraw_amount >100:
-                print("Your account is negative, you can not withdraw more than 100$")
-                return False
-            if (current_balance - withdraw_amount) < -100:
-                print("Your withdrawal would result in an account balance less than 100$")
-                return False
-            self.overdraft_count +=1
-            
-            if self.overdraft_count >=2:
-                self.is_account_active = False
-            
-        if withdraw_amount > current_balance:
-            print("Sorry. The amount you are trying to withdraw is greater than your account balance")
+        if withdraw_amount<=0:
+            print("withdraw amount must be positive")
             return False
         
-        if account_type == "checking":
-            self.balance_checking-=withdraw_amount
-            print(f"New checking account balance after withdrawal: {self.balance_checking}")
+        
+        # check if the withdrawal can be made without going below -100
+        if (current_balance - withdraw_amount) < -100:
+            print("negative result")
+            return False
+        
+        if current_balance >= 0:
+            if account_type == "checking":
+                self.balance_checking -= withdraw_amount
+                print(f"New checking account balance after withdrawal: {self.balance_checking}")
+                if self.balance_checking<0:
+                    self.overdraft_count+=1
+                    self.balance_checking-=35
+            else:
+                self.balance_savings -= withdraw_amount
+                print(f"New savings account balance after withdrawal: {self.balance_savings}")
+                if self.balance_checking<0:
+                    self.overdraft_count+=1
+                    self.balance_checking-=35
+        
+    
         else:
-            self.balance_savings-=withdraw_amount
-            print(f"New savings account balance after withdrawal: {self.balance_savings}")
             
+            if account_type == "checking":
+                self.balance_checking -= withdraw_amount
+                self.balance_checking-=35
+                print(f"New checking account balance after withdrawal: {self.balance_checking}")
+            else:
+                self.balance_savings -= withdraw_amount
+                self.balance_checking-=35
+                print(f"New savings account balance after withdrawal: {self.balance_savings}")
+
+            
+            self.overdraft_count += 1
+            if self.overdraft_count >= 2:
+                self.is_account_active = False
+                print("Account deactivated due to excessive overdrafts.")
+                self.update_csv()
+                # self.logout()
+                
+                
+        
         self.update_csv()
-        return True      
+
+        return True
     
     def deposit_options(self):
         account_choice=int(input("Which account you want to deposit to? \n(1) Checking account \n(2) Savings account\n"))
@@ -251,10 +270,10 @@ class Account():
 
 
     def get_recipient_account(self, recipient_account_id):
-        # Try to find the recipient's account from the bank file
+        # Try to find the recipient account from the bank file
         with open(bank_file, "r", newline="") as file:
             csvfile = csv.reader(file)
-            next(csvfile)  # Skip the header line
+            next(csvfile)  
             for lines in csvfile:
                 if lines and lines[0] == recipient_account_id:
                     # Returning Account object for the recipient
