@@ -123,12 +123,12 @@ class Account():
                         return True
                             
             print("Invalid login attempt. Please check your details and try again")
-            return 
+            return False
         
     def logout(self):
         print("You have logged out successfuly")
         return False
-    
+                
     def transaction_option(self):
         while True:
             option = int(input("\nWhat would you like to do? \n(1) Withdraw \n(2) Deposit \n(3) Transfer Money \n(4) Logout\n"))
@@ -138,9 +138,9 @@ class Account():
             elif option == 2:
                 existing_customer.deposit_options()
             elif option == 3:
-                pass
+                self.transfer_money()
             elif option == 4:
-                self.logout()
+                return self.logout()
             else:
                 print("Invalid input. Please choose a valid option.")
                 
@@ -164,6 +164,7 @@ class Account():
             csvwriter.writerow(headers) 
             csvwriter.writerows(lines)
             
+                
     def withdraw_options(self):
         account_choice=int(input("Which account you want to withdraw from? \n(1) Checking account \n(2) Savings account\n"))
         if account_choice == 1:
@@ -249,8 +250,84 @@ class Account():
         return True
 
 
-        
+    def get_recipient_account(self, recipient_account_id):
+        # Try to find the recipient's account from the bank file
+        with open(bank_file, "r", newline="") as file:
+            csvfile = csv.reader(file)
+            next(csvfile)  # Skip the header line
+            for lines in csvfile:
+                if lines and lines[0] == recipient_account_id:
+                    # Returning Account object for the recipient
+                    recipient_account = Account(lines[0], lines[3], float(lines[4]), float(lines[5]), int(lines[6]), lines[7].lower() == 'true')
+                    return recipient_account
+        return None  
 
+    def transfer_money(self):
+        transfer_option = int(input("Which account do you want to transfer from? \n(1) Checking to Savings \n(2) Savings to Checking \n(3) To another customer account\n"))
+        
+        if transfer_option == 1:
+            transferred_amount = float(input("Enter amount to transfer from checking to savings: "))
+            if transferred_amount <=0:
+                print("Transfer amout must be positive value")
+                return False
+            if transferred_amount >self.balance_checking:
+                print("Can not transfer due to insufficient balance in checking account")
+                return False
+            self.balance_checking-=transferred_amount
+            self.balance_savings+=transferred_amount
+            print(f"Transferred {transferred_amount} from checking to savings")
+            self.update_csv()
+            
+        elif transfer_option == 2:
+            transferred_amount = float(input("Enter amount to transfer from savings to checking: "))
+            if transferred_amount <=0:
+                print("Transfer amout must be positive value")
+                return False
+            if transferred_amount >self.balance_checking:
+                print("Can not transfer due to insufficient balance in savings account")
+                return False
+            self.balance_checking+=transferred_amount
+            self.balance_savings-=transferred_amount
+            print(f"Transferred {transferred_amount} from savings to checking")
+            self.update_csv()
+            
+        elif transfer_option ==3:
+            recipient_account_id = input("Enter the recipient account ID: ")
+            account_to_transfer_from=int(input("Which account do you want to transfer from? \n(1) Checking \n(2) Savings\n"))
+            transferred_amount = float(input("Enter amount to transfer to another customer account: "))
+            
+            if transferred_amount <=0:
+                print("Transfer amout must be positive value")
+                return False
+            
+            recipient_account = self.get_recipient_account(recipient_account_id)
+            if not recipient_account:
+                print("Recipient account not found")
+                return False
+            
+            
+            if account_to_transfer_from == 1:
+                if transferred_amount > self.balance_checking:
+                    print("Can not transfer due to insufficient balance in checking account")
+                    return
+                self.balance_checking -= transferred_amount
+                recipient_account.balance_checking += transferred_amount  
+                print(f"Transferred {transferred_amount} from your checking to recipient checking account")
+        
+            elif account_to_transfer_from == 2:
+                if transferred_amount > self.balance_savings:
+                    print("Can not transfer due to insufficient balance in checking account")
+                    return
+                self.balance_savings -= transferred_amount
+                recipient_account.balance_savings += transferred_amount  
+                print(f"Transferred {transferred_amount} from your savings to recipient checking account")
+            self.update_csv()
+            recipient_account.update_csv()
+            
+        else:
+            print("Invalid transfer option. Please choose a valid option")
+            return False
+            
 if __name__== "__main__":
     print("********** Welcome to ACME Bank **********")
     start_option=int(input("What do you want to do? \n(1) Add new customer \n(2) Log in \n"))
@@ -270,4 +347,3 @@ if __name__== "__main__":
             existing_customer.transaction_option()
     else:
         print("Invalid input")
-
