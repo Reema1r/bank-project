@@ -81,7 +81,10 @@ class BankCustomer():
                             self.last_name,
                             self.password,
                             self.balance_checking,
-                            self.balance_savings]
+                            self.balance_savings,
+                            self.overdraft_count,
+                            self.is_account_active
+                            ]
 
         with open(bank_file, "a", newline="") as csvfile: 
             csvwriter = csv.writer(csvfile)
@@ -119,7 +122,7 @@ class Account():
                 
     def transaction_option(self):
         while True:
-            option = int(input("\nWhat would you like to do? \n(1) Withdraw \n(2) Deposit \n(3) Transfer Money Log out\n(4) Log out\n"))
+            option = int(input("\nWhat would you like to do? \n(1) Withdraw \n(2) Deposit \n(3) Transfer Money \n(4) Logout\n"))
                     
             if option == 1:
                 existing_customer.withdraw_options()
@@ -127,11 +130,12 @@ class Account():
                 existing_customer.deposit_options()
             elif option == 3:
                 pass
-                break
             elif option == 4:
                 pass
             else:
                 print("Invalid input. Please choose a valid option.")
+                
+                
                 
     def withdraw_options(self):
         account_choice=int(input("Which account you want to withdraw from? \n(1) Checking account \n(2) Savings account\n"))
@@ -144,7 +148,6 @@ class Account():
             self.perform_withdraw(withdraw_amount,"savings")
         else:
             print("Invalid choice. Please choose 1 or 2")
-            
             
     def perform_withdraw(self, withdraw_amount, account_type):
         #check if the user is active
@@ -187,8 +190,8 @@ class Account():
             self.balance_savings-=withdraw_amount
             print(f"New savings account balance after withdrawal: {self.balance_savings}")
             
-        # self.update_csv(account_type)
-        return True
+        # self.update_csv()
+        return True      
     
     def deposit_options(self):
         account_choice=int(input("Which account you want to deposit to? \n(1) Checking account \n(2) Savings account\n"))
@@ -209,16 +212,17 @@ class Account():
             return False
         
         if account_type == "checking":
-            self.balance_checking+=deposit_amount
+            self.balance_checking += deposit_amount
             print(f"New checking account balance after deposit: {self.balance_checking}")
         else:
-            self.balance_savings+=deposit_amount
+            self.balance_savings += deposit_amount
             print(f"New savings account balance after deposit: {self.balance_savings}")
             
-        # self.update_csv(account_type)
+        # self.update_csv()
         return True
 
 
+        
 
 if __name__== "__main__":
     print("********** Welcome to ACME Bank **********")
