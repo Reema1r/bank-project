@@ -4,5 +4,7 @@ account_id,first_name,last_name,password,balance_checking,balance_savings,overdr
 10003,melvin,gordon,uYWE732g4ga1,2000,20000,0,True
 10004,stacey,abrams,DEU8_qw3y72$,2000,20000,0,True
 10005,jake,paul,d^dg23g)@,100000,100000,0,True
-10006,reema,radi,pass1234,1000,10000,0,True
-10007,Ghada,Almutairi,GH@@1,0,0,0,True
+10006,reema,radi,pass1234,2730.0,7020.0,0,True
+
+10007,sara,radi,234567,200.0,0.0,0,True
+10008,Ghada,Almutairi,GH@@1,0,0,0,True

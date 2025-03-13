@@ -38,7 +38,7 @@ class TestWithdraw(unittest.TestCase):
         self.account5 =Account("10004","DEU8_qw3y72$") 
         
     def test_withdraw_from_account(self):
-        # self.assertEqual(self.account3.perform_withdraw(-30,"checking"), False) # unsuccessful withdraw (negative withdraw amount)
+        self.assertEqual(self.account3.perform_withdraw(-30,"checking"), False) # unsuccessful withdraw (negative withdraw amount)
         self.assertEqual(self.account3.perform_withdraw(0, "savings"), False) # unsuccessful withdraw (zero withdraw amount)
 
         # Test if the account balance > 0
@@ -63,7 +63,10 @@ class TestDeposit(unittest.TestCase):
         self.assertEqual(self.account6.perform_deposit(0,"checking"), False) # unsuccessful deposit
 
 
+
+
 # class TestTransferMoney(unittest.TestCase):  
+
 
 if __name__== "__main__":
     unittest.main(verbosity=2)

@@ -97,6 +97,9 @@ class BankCustomer():
         elif self.first_name.isdigit() or self.last_name.isdigit():
             print("Name cannot be a number. Please enter a valid name")
             return False
+        elif not self.password:
+            print("Password cannot be empty. Please enter a valid password")
+            return False
             
         exists, new_customer_id = self.check_customer_existence() # Check if the customer exists
         if not exists:  # if exists = False , then not exists = True >> customer exists (can't add)
@@ -406,6 +409,7 @@ class Account():
             print(f"Transferred {transferred_amount} from checking to savings")
             self.update_csv()
             
+            
         elif transfer_option == 2:
             transferred_amount = float(input("Enter amount to transfer from savings to checking: "))
             
@@ -415,15 +419,16 @@ class Account():
                 return False
             
             # Check if account balance is sufficient 
-            if transferred_amount >self.balance_checking:
+            if transferred_amount > self.balance_savings:
                 print("Can not transfer due to insufficient balance in savings account")
                 return False
             
             # Update account balances after transfer
             self.balance_checking+=transferred_amount
             self.balance_savings-=transferred_amount
-            print(f"Transferred {transferred_amount} from savings to checking")
+            print(f"Transferred {transferred_amount} from savings to checking {self.balance_savings}")
             self.update_csv()
+            
             
         elif transfer_option ==3:
             recipient_account_id = input("Enter the recipient account ID: ")
@@ -462,6 +467,7 @@ class Account():
             self.update_csv()
             recipient_account.update_csv()
             
+        
         else:
             print("Invalid transfer option. Please choose a valid option")
             return False
