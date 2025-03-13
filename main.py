@@ -19,7 +19,8 @@ if not os.path.isfile(bank_file):
         ["10002", "james", "taylor", "idh36%@#FGd", "10000", "10000",0,True],
         ["10003", "melvin", "gordon", "uYWE732g4ga1", "2000", "20000",0,True],
         ["10004", "stacey", "abrams", "DEU8_qw3y72$", "2000", "20000",0,True],
-        ["10005", "jake", "paul", "d^dg23g)@", "100000", "100000",0,True]
+        ["10005", "jake", "paul", "d^dg23g)@", "100000", "100000",0,True],
+        ["10006", "reema", "radi", "pass1234", "1000", "10000",0,True]
     ]
 
     with open(bank_file, 'w', newline="") as csvfile:
@@ -46,11 +47,12 @@ class BankCustomer():
         self.overdraft_count=overdraft_count
         self.is_account_active=is_account_active
 
-    """
-    This method checks if the customer already exists in the CSV file by matching their first and last name
-    Returns: A tuple (boolean,ID), first element indicates wheather the customer exists or not, the second element is either new ID or None
-    """
+    
     def check_customer_existence(self):
+        """
+        This method checks if the customer already exists in the CSV file by matching their first and last name
+        Returns: A tuple (boolean,ID), first element indicates wheather the customer exists or not, the second element is either new ID or None
+        """
         existing_ids=[] # To store existing customer IDs retrieved from CSV
         existing_customers=[] # To store existing customers names (first, last)
         new_customer_id=100001 # Assign the ID to 10001, if the file is empty
@@ -89,6 +91,13 @@ class BankCustomer():
         This method adds a new customer to the CSV file if the customer does not already exists
         Returns: A bool value of True if the new customer was added successfully, False otherwise
         """
+        if not self.first_name or not self.last_name:
+            print("Name cannot be empty. Please enter a valid name")
+            return False
+        elif self.first_name.isdigit() or self.last_name.isdigit():
+            print("Name cannot be a number. Please enter a valid name")
+            return False
+            
         exists, new_customer_id = self.check_customer_existence() # Check if the customer exists
         if not exists:  # if exists = False , then not exists = True >> customer exists (can't add)
                         # if exists = True , then not exists = False >> customer doesn't exists (can add)
@@ -216,11 +225,11 @@ class Account():
         account_choice=int(input("Which account you want to withdraw from? \n(1) Checking account \n(2) Savings account\n"))
         
         if account_choice == 1:
-            withdraw_amount= float(input("Enter amount to withdraw from checking account: "))
+            withdraw_amount= input("Enter amount to withdraw from checking account: ")
             self.perform_withdraw(withdraw_amount, "checking")
             
         elif account_choice == 2:
-            withdraw_amount= float(input("Enter amount to withdraw from savings account: "))
+            withdraw_amount= input("Enter amount to withdraw from savings account: ")
             self.perform_withdraw(withdraw_amount,"savings")
         else:
             print("Invalid choice. Please choose 1 or 2")
@@ -232,6 +241,20 @@ class Account():
         It checks and ensures that the withdrawal amount is valid and the account balance will not go below -100 
         It also updates the account balances, applies overdraft fees, and deactivates the account after 2 overdrafts
         """
+        
+        try:
+            if withdraw_amount == "":
+                raise ValueError("Withdrawal amount cannot be empty")
+            
+            withdraw_amount = float(withdraw_amount)  
+        
+            if withdraw_amount <= 0:
+                raise ValueError("Withdrawal amount must be a positive number")
+                
+        except ValueError as error:
+            print(f"Invalid input. {error}")
+            return False 
+        
         # Check if the account has been deactivated
         if self.overdraft_count == 2:
             print("acoount is deactivated due to excessive overdrafts")
@@ -244,10 +267,6 @@ class Account():
         else:
             current_balance = self.balance_savings
             
-        #  Ensure that the withdraw amount is positive
-        if withdraw_amount<=0:
-            print("withdraw amount must be positive")
-            return False
         
         # Check if the withdrawal can be made without going below -100
         if (current_balance - withdraw_amount) < -100:
@@ -300,30 +319,39 @@ class Account():
         Depending on the user choice, it requests the deposit amount and calls 
         `perform_deposit` method to perform the deposit
         """
-        
         account_choice=int(input("Which account you want to deposit to? \n(1) Checking account \n(2) Savings account\n"))
         
         if account_choice == 1:
-            deposit_amount= float(input("Enter amount to deposit to checking account: "))
+            deposit_amount= input("Enter amount to deposit to checking account: ")
             self.perform_deposit(deposit_amount, "checking")
             
         elif account_choice == 2:
-            deposit_amount= float(input("Enter amount to deposit to savings account: "))
+            deposit_amount= input("Enter amount to deposit to savings account: ")
             self.perform_deposit(deposit_amount,"savings")
         else:
             print("Invalid choice. Please choose 1 or 2")
-    
-    
+            
+            
+
     def perform_deposit(self, deposit_amount, account_type):
         """
         This method processes the deposit for the given account type (checking or savings)
         It checks and ensures that the deposit amount is valid, then updates the account balances and save changes to the CSV file
         """
-        # Check if the input amount is valid 
-        if deposit_amount <= 0:
-            print("Deposit amount must be positive value")
-            return False
         
+        try:
+            if deposit_amount =="":
+                raise ValueError("Deposit amount cannot be empty")
+                
+            deposit_amount=float(deposit_amount)
+                
+            if deposit_amount <= 0:
+                raise ValueError("Deposit amount must be a positive number")
+                
+        except ValueError as error:
+                print(f"Invalid input. {error}")
+                return False
+            
         if account_type == "checking":
             self.balance_checking += deposit_amount
             print(f"New checking account balance after deposit: {self.balance_checking}")
@@ -437,10 +465,13 @@ class Account():
         else:
             print("Invalid transfer option. Please choose a valid option")
             return False
-            
+
 if __name__== "__main__":
     print("********** Welcome to ACME Bank **********")
-    start_option=int(input("What do you want to do? \n(1) Add new customer \n(2) Log in \n"))
+    start_option=int(input("Welcome to our bank. Please select one of the following options:\n"
+                        "(1) Add new customer\n"
+                        "(2) Log in \n"
+                        "Your choice:"))
 
     if start_option == 1:
         first_name =input("Enter first name: ")
